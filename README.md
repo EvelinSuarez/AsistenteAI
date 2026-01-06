@@ -11,15 +11,11 @@ cd <nombre-de-la-carpeta>
 
 2- Instalar dependencias:
 
-npm install
-# o
-yarn install
+npm install o yarn install
 
 3- Ejecutar el servidor de desarrollo:
 
-npm run dev
-# o
-yarn dev
+npm run dev o yarn dev
 
 4- Abrir en el navegador:
 Ve a http://localhost:3000 para ver la aplicación funcionando.
