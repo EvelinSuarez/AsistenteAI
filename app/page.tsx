@@ -1,65 +1,143 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Plus, BrainCircuit } from 'lucide-react';
+import Swal from 'sweetalert2';
+import { toast } from '@/lib/toast';
+import dataInitial from '@/types/dataInitial';
+
+import AssistantModal from '@/components/AssistantModal';
+import { AssistantCard } from '@/components/AssistantCard';
+import { Assistant } from '@/types/assistant';
+
+export default function HomePage() {
+  const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [assistants, setAssistants] = useState<Assistant[]>([]);
+  const [editingAssistant, setEditingAssistant] = useState<Assistant | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('assistants');
+    if (saved) {
+      setAssistants(JSON.parse(saved));
+    } else {
+      setAssistants(dataInitial);
+      localStorage.setItem('assistants', JSON.stringify(dataInitial));
+    }
+    setLoading(false);
+  }, []);
+
+  const saveToLocalStorage = (list: Assistant[]) => {
+    setAssistants(list);
+    localStorage.setItem('assistants', JSON.stringify(list));
+  };
+
+  const handleOpenCreate = () => {
+    setEditingAssistant(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (assistant: Assistant) => {
+    setEditingAssistant(assistant);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveAssistant = (formData: any) => {
+    const assistantData: Assistant = {
+      ...formData,
+      id: editingAssistant ? editingAssistant.id : Date.now().toString(),
+      rules: formData.rules || ""
+    };
+
+    const updatedList = editingAssistant 
+      ? assistants.map(a => a.id === assistantData.id ? assistantData : a)
+      : [...assistants, assistantData];
+
+    saveToLocalStorage(updatedList);
+    setIsModalOpen(false);
+  };
+
+  const handleDelete = (id: string) => {
+    Swal.fire({
+      title: '¿Eliminar asistente?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#0f172a',
+      cancelButtonColor: '#f43f5e',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      customClass: { popup: 'rounded-3xl' }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const filtered = assistants.filter(a => a.id !== id);
+        saveToLocalStorage(filtered);
+        toast('Eliminado', 'success');
+      }
+    });
+  };
+
+  if (loading) return null;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-[#F8FAFC] text-slate-900 px-6 py-12">
+      <div className="max-w-6xl mx-auto">
+        
+      <header className="flex justify-between items-center mb-16">
+        <div>
+          {/* Título en Slate oscuro para mayor elegancia */}
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">
+            Mis Asistentes
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-slate-500 text-base">
+            Gestiona y optimiza tus agentes de IA con precisión.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <button 
+          onClick={handleOpenCreate}
+          /* Gradiente tipo Funnelhot: Naranja a Naranja Rojizo */
+          className="bg-gradient-to-r from-[#FF4D00] to-[#FF7A00] text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:shadow-orange-200 transition-all flex items-center gap-2 text-sm font-bold active:scale-95 shadow-md"
+        >
+          <Plus size={20} /> Nuevo Asistente
+        </button>
+      </header>
+
+        {assistants.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm animate-in fade-in duration-700">
+            <div className="w-24 h-24 bg-slate-50 rounded-3xl flex items-center justify-center mb-6">
+              <BrainCircuit size={40} className="text-slate-300" />
+            </div>
+            <h2 className="text-xl font-semibold text-slate-400">No hay asistentes configurados</h2>
+            <button 
+              onClick={handleOpenCreate} 
+              className="mt-4 text-[#FF4D00] font-semibold hover:text-[#e64500] transition-colors"
+            >
+              Crear el primero ahora
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {assistants.map((ast) => (
+              <AssistantCard 
+                key={ast.id} 
+                assistant={ast} 
+                onDelete={() => handleDelete(ast.id)} 
+                onEdit={() => handleOpenEdit(ast)}
+                onTrain={() => router.push(`/${ast.id}`)} 
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <AssistantModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSave={handleSaveAssistant}
+        initialData={editingAssistant}
+      />
+    </main>
   );
 }
