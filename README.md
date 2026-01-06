@@ -6,8 +6,8 @@ Instrucciones para correr el proyecto:
 
 1- Clonar el repositorio:
 
-git clone <url-del-repositorio>
-cd <nombre-de-la-carpeta>
+git clone https://github.com/EvelinSuarez/AsistenteAI.git
+cd nombre-de-la-carpeta
 
 2- Instalar dependencias:
 
@@ -21,7 +21,8 @@ npm run dev o yarn dev
 Ve a http://localhost:3000 para ver la aplicación funcionando.
 
 
-🛠 Decisiones Técnicas
+Decisiones Técnicas:
+
 Next.js 14 (App Router): Se eligió por su sistema de rutas intuitivo y su excelente rendimiento. El uso de use client se limitó a los componentes de interacción para mantener un buen equilibrio.
 
 Tailwind CSS: Utilizado para el estilado por su velocidad de desarrollo y para garantizar un diseño "Pixel Perfect" basado en una estética moderna (Clean UI / SaaS Style).
@@ -50,11 +51,18 @@ Debido al tiempo disponible y para asegurar la estabilidad de las funciones prin
 Backend Real: Se dejó fuera la integración con una base de datos real (como PostgreSQL o MongoDB) y autenticación. Razón: El foco principal era demostrar habilidades de UI/UX y manejo de estado en el frontend.
 Subida de Archivos Real: En la sección de "Conocimiento", el botón es funcional a nivel de UI pero no procesa archivos. Razón: El procesamiento de PDFs/Textos para embeddings requiere un backend robusto con servicios de Vector Database que excedían el alcance de esta prueba técnica.
 
-Integración Real con OpenAI/Claude: El chat utiliza una simulación de respuesta. Razón: Evitar el manejo de API Keys sensibles y costos asociados durante la revisión, aunque el código está estructurado para conectar un endpoint fácilmente.
+Integración Real con OpenAI/Claude: El chat utiliza una simulación de respuesta. Razón: Evitar el manejo de API Keys sensibles y costos asociados durante la revisión, aunque el código está estructurado para conectar un endpoint fácilment
 
-Tiempo aproximado de dedicación
+
+Tiempo aproximado de dedicación:
+
 Planificación y Estructura de Datos: 20  minutos.
-Desarrollo del Dashboard y CRUD: 1 horas.
-Desarrollo del Laboratorio de Entrenamiento y Lógica de Chat: 2 horas.
+
+Desarrollo de la pagina principal y CRUD: 1 horas.
+
+Desarrollo de Entrenamiento y Lógica de Chat: 2 horas.
+
 Pulido de UI/UX y Responsividad: 30 minutos.
+
 Total: 4 horas aproximadamente.
+
